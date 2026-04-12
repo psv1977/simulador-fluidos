@@ -50,3 +50,17 @@ def calcular():
 if __name__ == '__main__':
     # debug=True reinicia el servidor automáticamente cuando guardas cambios en el código
     app.run(debug=True, host='0.0.0.0', port=5000)
+
+@app.route('/obtener_grafica', methods=['POST'])
+def obtener_grafica():
+    datos = request.json
+    # Generamos una curva desde 1 L/s hasta el doble del caudal actual para dar contexto
+    caudal_actual = float(datos['caudal'])
+    puntos = mf.generar_curva_perdida(
+        caudal_min=1, 
+        caudal_max=caudal_actual * 2, 
+        diametro=float(datos['diametro']),
+        longitud=float(datos['longitud']),
+        material=datos['material']
+    )
+    return jsonify(puntos)
