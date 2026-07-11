@@ -146,13 +146,11 @@ Para la versión inicial se usarán grupos de Django:
 
 ## 8. Base de datos
 
-La base de datos objetivo será PostgreSQL.
+La base de datos oficial de FluidLab será PostgreSQL.
 
-Durante el desarrollo inicial se puede usar SQLite si es necesario, pero la arquitectura debe mantenerse compatible con PostgreSQL.
+La aplicación interactuará con la base de datos exclusivamente mediante el ORM de Django.
 
-La aplicación debe interactuar con la base de datos usando el ORM de Django.
-
-No se debe usar SQL crudo salvo justificación técnica.
+SQLite no forma parte de la arquitectura prevista del proyecto.
 
 ## 9. Motor de cálculo
 
@@ -223,9 +221,11 @@ No se incluirá inicialmente:
 - canales abiertos;
 - dashboard docente avanzado;
 - exportación PDF;
-- exportación Excel;
+- dashboard docente avanzado con métricas, gráficos y seguimiento consolidado;
 - simulaciones transitorias;
 - modelos CFD.
+
+La versión 1.0 sí permitirá que los profesores consulten las simulaciones asociadas a los cursos que administran. Lo que queda fuera de alcance es un dashboard docente avanzado con indicadores, visualizaciones y analítica académica.
 
 ## 13. Principios de diseño
 
