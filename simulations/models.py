@@ -52,6 +52,8 @@ class Course(models.Model):
 
     class Meta:
         ordering = ["-academic_year", "code"]
+        verbose_name = "curso"
+        verbose_name_plural = "cursos"
 
     def __str__(self) -> str:
         return f"{self.code} - {self.name}"
@@ -81,10 +83,12 @@ class Enrollment(models.Model):
     enrolled_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        verbose_name = "inscripción"
+        verbose_name_plural = "inscripciones"
         constraints = [
             models.UniqueConstraint(
                 fields=["course", "student"],
-                name="unique_student_course_enrollment",
+                name="unique_enrollment_course_student",
             )
         ]
 
@@ -115,6 +119,8 @@ class Fluid(models.Model):
 
     class Meta:
         ordering = ["name"]
+        verbose_name = "fluido"
+        verbose_name_plural = "fluidos"
         constraints = [
             models.UniqueConstraint(
                 fields=["name", "reference_temperature_c"],
@@ -183,8 +189,8 @@ class Simulation(models.Model):
         on_delete=models.PROTECT,
         related_name="simulations",
     )
-    title = models.CharField(max_length=150)
-    description = models.TextField(blank=True)
+    title = models.CharField("Título", max_length=150)
+    description = models.TextField("Descripción", blank=True)
     status = models.CharField(
         max_length=20,
         choices=SimulationStatus.choices,
@@ -192,96 +198,112 @@ class Simulation(models.Model):
     )
 
     diameter_m = models.DecimalField(
+        "Diámetro interno [m]",
         max_digits=12,
         decimal_places=6,
         validators=[MinValueValidator(Decimal("0.000001"))],
     )
     length_m = models.DecimalField(
+        "Longitud [m]",
         max_digits=12,
         decimal_places=4,
         validators=[MinValueValidator(Decimal("0.0001"))],
     )
     absolute_roughness_m = models.DecimalField(
+        "Rugosidad absoluta [m]",
         max_digits=12,
         decimal_places=8,
         validators=[MinValueValidator(Decimal("0"))],
     )
     velocity_m_s = models.DecimalField(
-    max_digits=12,
-    decimal_places=6,
-    null=True,
-    blank=True,
-    validators=[MinValueValidator(Decimal("0.000001"))],
+        "Velocidad [m/s]",
+        max_digits=14,
+        decimal_places=8,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(Decimal("0.000001"))],
     )
     flow_rate_m3_s = models.DecimalField(
-    max_digits=14,
-    decimal_places=8,
-    null=True,
+        "Caudal [m³/s]",
+        max_digits=14,
+        decimal_places=8,
+        null=True,
     blank=True,
         validators=[MinValueValidator(Decimal("0.00000001"))],
     )
     gravity_m_s2 = models.DecimalField(
-    max_digits=8,
-    decimal_places=5,
-    default=Decimal("9.80665"),
-    validators=[MinValueValidator(Decimal("0.00001"))],
+        "Gravedad [m/s²]",
+        max_digits=8,
+        decimal_places=5,
+        default=Decimal("9.80665"),
+        validators=[MinValueValidator(Decimal("0.00001"))],
     )
 
     density_used_kg_m3 = models.DecimalField(
+        "Densidad utilizada [kg/m³]",
         max_digits=10,
         decimal_places=3,
         validators=[MinValueValidator(Decimal("0.001"))],
         editable=False,
     )
     dynamic_viscosity_used_pa_s = models.DecimalField(
+        "Viscosidad dinámica utilizada [Pa·s]",
         max_digits=12,
         decimal_places=8,
         validators=[MinValueValidator(Decimal("0.00000001"))],
         editable=False,
     )
     reference_temperature_used_c = models.DecimalField(
+        "Temperatura de referencia utilizada [°C]",
         max_digits=6,
         decimal_places=2,
         editable=False,
     )
 
     area_m2 = models.DecimalField(
+        "Área [m²]",
         max_digits=14,
         decimal_places=8,
         null=True,
         blank=True,
     )
     reynolds_number = models.DecimalField(
+        "Número de Reynolds",
         max_digits=18,
         decimal_places=6,
         null=True,
         blank=True,
     )
     flow_regime = models.CharField(
+        "Régimen de flujo",
         max_length=20,
         choices=FlowRegime.choices,
         null=True,
         blank=True,
     )
     relative_roughness = models.DecimalField(
+        "Rugosidad relativa",
         max_digits=14,
         decimal_places=8,
         null=True,
         blank=True,
     )
     friction_factor = models.DecimalField(
+        "Factor de fricción",
         max_digits=12,
         decimal_places=8,
         null=True,
         blank=True,
     )
     head_loss_m = models.DecimalField(
+        "Pérdida de carga [m]",
         max_digits=14,
         decimal_places=6,
         null=True,
         blank=True,
     )
     pressure_drop_pa = models.DecimalField(
+        "Caída de presión [Pa]",
         max_digits=16,
         decimal_places=4,
         null=True,
