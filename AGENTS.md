@@ -240,3 +240,11 @@ El desarrollador principal posee conocimientos de ingeniería mecánica y está 
 El agente debe priorizar explicaciones claras y justificar las decisiones de arquitectura cuando existan varias alternativas razonables.
 
 Siempre que sea posible, explicar brevemente el motivo técnico de las decisiones propuestas para facilitar el aprendizaje y el mantenimiento futuro del proyecto.
+
+## Idioma del proyecto
+
+- Los nombres de clases, funciones, variables, campos ORM y archivos deben escribirse en inglés.
+- La interfaz destinada al usuario debe mostrarse en español.
+- Los modelos deben usar `verbose_name` y `verbose_name_plural`.
+- Los formularios, mensajes, plantillas y etiquetas visibles deben escribirse en español.
+- La configuración regional principal será `es-cl`.
