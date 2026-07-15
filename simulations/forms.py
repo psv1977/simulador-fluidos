@@ -6,6 +6,12 @@ from django import forms
 class HydraulicSimulationForm(forms.Form):
     """Formulario de entrada para una simulación hidráulica básica."""
 
+    title = forms.CharField(
+        label="Título de la simulación",
+        max_length=150,
+        initial="Simulación hidráulica básica",
+    )
+
     diameter_m = forms.DecimalField(
         label="Diámetro interno [m]",
         required=True,

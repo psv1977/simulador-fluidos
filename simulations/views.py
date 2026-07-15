@@ -1,4 +1,8 @@
+from decimal import Decimal
+
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.utils import timezone
 
 from simulations.calculations import (
     calculate_pipe_area,
@@ -7,10 +11,13 @@ from simulations.calculations import (
     classify_flow_regime,
 )
 from simulations.forms import HydraulicSimulationForm
+from simulations.models import CalculationModel, Simulation, SimulationStatus
 
 
+@login_required
 def hydraulic_simulation(request):
     results = None
+    saved_simulation = None
 
     if request.method == "POST":
         form = HydraulicSimulationForm(request.POST)
@@ -46,12 +53,46 @@ def hydraulic_simulation(request):
                 "reynolds_number": reynolds_number,
                 "flow_regime": flow_regime,
             }
+
+            calculation_model, _ = CalculationModel.objects.get_or_create(
+                name="Modelo hidráulico básico",
+                version="1.0",
+                defaults={
+                    "description": (
+                        "Calcula área, velocidad, número de Reynolds "
+                        "y régimen de flujo."
+                    ),
+                    "is_active": True,
+                },
+            )
+
+            saved_simulation = Simulation.objects.create(
+                owner=request.user,
+                calculation_model=calculation_model,
+                title=form.cleaned_data["title"],
+                status=SimulationStatus.CALCULATED,
+                diameter_m=form.cleaned_data["diameter_m"],
+                flow_rate_m3_s=form.cleaned_data["flow_rate_m3_s"],
+                density_used_kg_m3=form.cleaned_data["density_kg_m3"],
+                dynamic_viscosity_used_pa_s=(
+                    form.cleaned_data["dynamic_viscosity_pa_s"]
+                ),
+                reference_temperature_used_c=Decimal("20.00"),
+                area_m2=Decimal(str(area_m2)),
+                velocity_m_s=Decimal(str(velocity_m_s)),
+                reynolds_number=Decimal(str(reynolds_number)),
+                flow_regime=flow_regime,
+                calculation_version="1.0",
+                executed_at=timezone.now(),
+                )
+            print("Simulación guardada:", saved_simulation.id)  
     else:
         form = HydraulicSimulationForm()
 
     context = {
         "form": form,
         "results": results,
+        "saved_simulation": saved_simulation,
     }
 
     return render(

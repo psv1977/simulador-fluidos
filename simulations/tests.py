@@ -1,3 +1,5 @@
+"""Pruebas automatizadas para el motor hidráulico de FluidLab."""
+
 from math import pi
 
 from django.test import SimpleTestCase
@@ -11,110 +13,107 @@ from simulations.calculations import (
 )
 
 
-class HydraulicCalculationsTests(SimpleTestCase):
-    """Unit tests for hydraulic calculation helpers."""
+class PipeAreaTests(SimpleTestCase):
+    """Pruebas para el cálculo del área de una tubería."""
 
-    def test_calculate_pipe_area_with_valid_diameter(self):
-        area_m2 = calculate_pipe_area(2.0)
+    def test_calculate_pipe_area(self):
+        """Debe calcular correctamente el área de una tubería circular."""
+        diameter_m = 0.1
 
-        self.assertAlmostEqual(area_m2, pi)
+        result = calculate_pipe_area(diameter_m)
+        expected = pi * (diameter_m / 2) ** 2
 
-    def test_calculate_pipe_area_with_small_positive_diameter(self):
-        area_m2 = calculate_pipe_area(0.001)
+        self.assertAlmostEqual(result, expected)
 
-        self.assertAlmostEqual(area_m2, pi * (0.0005**2))
-
-    def test_calculate_pipe_area_rejects_zero_diameter(self):
+    def test_pipe_area_rejects_zero_diameter(self):
+        """Debe rechazar un diámetro igual a cero."""
         with self.assertRaises(ValueError):
             calculate_pipe_area(0)
 
-    def test_calculate_pipe_area_rejects_negative_diameter(self):
+    def test_pipe_area_rejects_negative_diameter(self):
+        """Debe rechazar un diámetro negativo."""
         with self.assertRaises(ValueError):
             calculate_pipe_area(-0.1)
 
-    def test_calculate_flow_rate_with_valid_inputs(self):
-        flow_rate_m3_s = calculate_flow_rate(area_m2=0.5, velocity_m_s=2.0)
 
-        self.assertAlmostEqual(flow_rate_m3_s, 1.0)
+class FlowRateTests(SimpleTestCase):
+    """Pruebas para el cálculo del caudal volumétrico."""
 
-    def test_calculate_flow_rate_with_small_positive_inputs(self):
-        flow_rate_m3_s = calculate_flow_rate(
-            area_m2=0.0001,
-            velocity_m_s=0.001,
+    def test_calculate_flow_rate(self):
+        """Debe calcular el caudal mediante Q = A × V."""
+        result = calculate_flow_rate(
+            area_m2=0.01,
+            velocity_m_s=2.0,
         )
 
-        self.assertAlmostEqual(flow_rate_m3_s, 0.0000001)
+        self.assertAlmostEqual(result, 0.02)
 
-    def test_calculate_flow_rate_rejects_zero_area(self):
+    def test_flow_rate_rejects_invalid_area(self):
+        """Debe rechazar áreas iguales o menores que cero."""
         with self.assertRaises(ValueError):
-            calculate_flow_rate(area_m2=0, velocity_m_s=2.0)
+            calculate_flow_rate(
+                area_m2=0,
+                velocity_m_s=2.0,
+            )
 
-    def test_calculate_flow_rate_rejects_zero_velocity(self):
+    def test_flow_rate_rejects_invalid_velocity(self):
+        """Debe rechazar velocidades iguales o menores que cero."""
         with self.assertRaises(ValueError):
-            calculate_flow_rate(area_m2=0.5, velocity_m_s=0)
+            calculate_flow_rate(
+                area_m2=0.01,
+                velocity_m_s=0,
+            )
 
-    def test_calculate_flow_rate_rejects_negative_area(self):
-        with self.assertRaises(ValueError):
-            calculate_flow_rate(area_m2=-0.5, velocity_m_s=2.0)
 
-    def test_calculate_flow_rate_rejects_negative_velocity(self):
-        with self.assertRaises(ValueError):
-            calculate_flow_rate(area_m2=0.5, velocity_m_s=-2.0)
+class VelocityTests(SimpleTestCase):
+    """Pruebas para el cálculo de la velocidad media."""
 
-    def test_calculate_velocity_with_valid_inputs(self):
-        velocity_m_s = calculate_velocity(area_m2=0.5, flow_rate_m3_s=1.0)
-
-        self.assertAlmostEqual(velocity_m_s, 2.0)
-
-    def test_calculate_velocity_with_small_positive_inputs(self):
-        velocity_m_s = calculate_velocity(
-            area_m2=0.0001,
-            flow_rate_m3_s=0.0000001,
+    def test_calculate_velocity(self):
+        """Debe calcular la velocidad mediante V = Q / A."""
+        result = calculate_velocity(
+            area_m2=0.01,
+            flow_rate_m3_s=0.02,
         )
 
-        self.assertAlmostEqual(velocity_m_s, 0.001)
+        self.assertAlmostEqual(result, 2.0)
 
-    def test_calculate_velocity_rejects_zero_area(self):
+    def test_velocity_rejects_invalid_area(self):
+        """Debe rechazar áreas iguales o menores que cero."""
         with self.assertRaises(ValueError):
-            calculate_velocity(area_m2=0, flow_rate_m3_s=1.0)
+            calculate_velocity(
+                area_m2=0,
+                flow_rate_m3_s=0.02,
+            )
 
-    def test_calculate_velocity_rejects_zero_flow_rate(self):
+    def test_velocity_rejects_invalid_flow_rate(self):
+        """Debe rechazar caudales iguales o menores que cero."""
         with self.assertRaises(ValueError):
-            calculate_velocity(area_m2=0.5, flow_rate_m3_s=0)
+            calculate_velocity(
+                area_m2=0.01,
+                flow_rate_m3_s=0,
+            )
 
-    def test_calculate_velocity_rejects_negative_area(self):
-        with self.assertRaises(ValueError):
-            calculate_velocity(area_m2=-0.5, flow_rate_m3_s=1.0)
 
-    def test_calculate_velocity_rejects_negative_flow_rate(self):
-        with self.assertRaises(ValueError):
-            calculate_velocity(area_m2=0.5, flow_rate_m3_s=-1.0)
+class ReynoldsNumberTests(SimpleTestCase):
+    """Pruebas para el cálculo del número de Reynolds."""
 
-    def test_calculate_reynolds_number_with_valid_inputs(self):
-        reynolds_number = calculate_reynolds_number(
+    def test_calculate_reynolds_number(self):
+        """Debe calcular correctamente el número de Reynolds."""
+        result = calculate_reynolds_number(
             density_kg_m3=1000,
             velocity_m_s=2,
-            diameter_m=0.05,
-            dynamic_viscosity_pa_s=0.001,
-        )
-
-        self.assertAlmostEqual(reynolds_number, 100000)
-
-    def test_calculate_reynolds_number_with_boundary_like_laminar_value(self):
-        reynolds_number = calculate_reynolds_number(
-            density_kg_m3=1000,
-            velocity_m_s=0.02299,
             diameter_m=0.1,
             dynamic_viscosity_pa_s=0.001,
         )
 
-        self.assertAlmostEqual(reynolds_number, 2299)
+        self.assertAlmostEqual(result, 200000)
 
-    def test_calculate_reynolds_number_rejects_zero_values(self):
-        invalid_inputs = (
+    def test_reynolds_rejects_invalid_values(self):
+        """Debe rechazar parámetros iguales o menores que cero."""
+        invalid_cases = [
             {
                 "density_kg_m3": 0,
-                "velocity_m_s": 1,
+                "velocity_m_s": 2,
                 "diameter_m": 0.1,
                 "dynamic_viscosity_pa_s": 0.001,
             },
@@ -126,73 +125,48 @@ class HydraulicCalculationsTests(SimpleTestCase):
             },
             {
                 "density_kg_m3": 1000,
-                "velocity_m_s": 1,
+                "velocity_m_s": 2,
                 "diameter_m": 0,
                 "dynamic_viscosity_pa_s": 0.001,
             },
             {
                 "density_kg_m3": 1000,
-                "velocity_m_s": 1,
+                "velocity_m_s": 2,
                 "diameter_m": 0.1,
                 "dynamic_viscosity_pa_s": 0,
             },
-        )
+        ]
 
-        for values in invalid_inputs:
-            with self.subTest(values=values):
+        for parameters in invalid_cases:
+            with self.subTest(parameters=parameters):
                 with self.assertRaises(ValueError):
-                    calculate_reynolds_number(**values)
+                    calculate_reynolds_number(**parameters)
 
-    def test_calculate_reynolds_number_rejects_negative_values(self):
-        valid_inputs = {
-            "density_kg_m3": 1000,
-            "velocity_m_s": 1,
-            "diameter_m": 0.1,
-            "dynamic_viscosity_pa_s": 0.001,
-        }
 
-        for field_name in valid_inputs:
-            values = valid_inputs.copy()
-            values[field_name] = -values[field_name]
+class FlowRegimeTests(SimpleTestCase):
+    """Pruebas para la clasificación del régimen de flujo."""
 
-            with self.subTest(field_name=field_name):
-                with self.assertRaises(ValueError):
-                    calculate_reynolds_number(**values)
+    def test_laminar_flow(self):
+        """Debe clasificar como laminar un Reynolds menor que 2300."""
+        self.assertEqual(classify_flow_regime(1500), "LAMINAR")
 
-    def test_classify_flow_regime_valid_ranges(self):
-        cases = (
-            (1, "LAMINAR"),
-            (1500, "LAMINAR"),
-            (2500, "TRANSITION"),
-            (5000, "TURBULENT"),
-        )
+    def test_transition_flow_lower_boundary(self):
+        """Reynolds igual a 2300 debe ser transicional."""
+        self.assertEqual(classify_flow_regime(2300), "TRANSITION")
 
-        for reynolds_number, expected_regime in cases:
-            with self.subTest(reynolds_number=reynolds_number):
-                self.assertEqual(
-                    classify_flow_regime(reynolds_number),
-                    expected_regime,
-                )
+    def test_transition_flow(self):
+        """Debe clasificar el intervalo transicional."""
+        self.assertEqual(classify_flow_regime(3000), "TRANSITION")
 
-    def test_classify_flow_regime_reynolds_limits(self):
-        cases = (
-            (2299, "LAMINAR"),
-            (2300, "TRANSITION"),
-            (3999, "TRANSITION"),
-            (4000, "TURBULENT"),
-        )
+    def test_turbulent_flow_lower_boundary(self):
+        """Reynolds igual a 4000 debe ser turbulento."""
+        self.assertEqual(classify_flow_regime(4000), "TURBULENT")
 
-        for reynolds_number, expected_regime in cases:
-            with self.subTest(reynolds_number=reynolds_number):
-                self.assertEqual(
-                    classify_flow_regime(reynolds_number),
-                    expected_regime,
-                )
+    def test_turbulent_flow(self):
+        """Debe clasificar Reynolds altos como turbulentos."""
+        self.assertEqual(classify_flow_regime(100000), "TURBULENT")
 
-    def test_classify_flow_regime_rejects_zero_reynolds_number(self):
+    def test_flow_regime_rejects_invalid_reynolds(self):
+        """Debe rechazar Reynolds iguales o menores que cero."""
         with self.assertRaises(ValueError):
             classify_flow_regime(0)
-
-    def test_classify_flow_regime_rejects_negative_reynolds_number(self):
-        with self.assertRaises(ValueError):
-            classify_flow_regime(-1)

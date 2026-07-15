@@ -183,6 +183,8 @@ class Simulation(models.Model):
         Fluid,
         on_delete=models.PROTECT,
         related_name="simulations",
+        null=True,
+        blank=True,
     )
     calculation_model = models.ForeignKey(
         CalculationModel,
@@ -207,12 +209,16 @@ class Simulation(models.Model):
         "Longitud [m]",
         max_digits=12,
         decimal_places=4,
+        null=True,
+        blank=True,
         validators=[MinValueValidator(Decimal("0.0001"))],
     )
     absolute_roughness_m = models.DecimalField(
         "Rugosidad absoluta [m]",
         max_digits=12,
         decimal_places=8,
+        null=True,
+        blank=True,
         validators=[MinValueValidator(Decimal("0"))],
     )
     velocity_m_s = models.DecimalField(
@@ -228,7 +234,7 @@ class Simulation(models.Model):
         max_digits=14,
         decimal_places=8,
         null=True,
-    blank=True,
+        blank=True,
         validators=[MinValueValidator(Decimal("0.00000001"))],
     )
     gravity_m_s2 = models.DecimalField(
