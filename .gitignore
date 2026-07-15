@@ -1,5 +1,6 @@
 # Entorno virtual
 venv/
+.venv/
 
 # Python
 __pycache__/
@@ -19,3 +20,7 @@ staticfiles/
 
 # Linux
 *.swp
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
