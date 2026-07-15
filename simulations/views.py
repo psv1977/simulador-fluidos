@@ -15,6 +15,24 @@ from simulations.models import CalculationModel, Simulation, SimulationStatus
 
 
 @login_required
+def simulation_list(request):
+    simulations = (
+        Simulation.objects.filter(owner=request.user)
+        .select_related(
+            "calculation_model",
+            "fluid",
+            "course",
+        )
+    )
+
+    return render(
+        request,
+        "simulations/simulation_list.html",
+        {"simulations": simulations},
+    )
+
+
+@login_required
 def hydraulic_simulation(request):
     results = None
     saved_simulation = None
@@ -45,6 +63,7 @@ def hydraulic_simulation(request):
                 diameter_m=diameter_m,
                 dynamic_viscosity_pa_s=dynamic_viscosity_pa_s,
             )
+
             flow_regime = classify_flow_regime(reynolds_number)
 
             results = {
@@ -84,8 +103,8 @@ def hydraulic_simulation(request):
                 flow_regime=flow_regime,
                 calculation_version="1.0",
                 executed_at=timezone.now(),
-                )
-            print("Simulación guardada:", saved_simulation.id)  
+            )
+
     else:
         form = HydraulicSimulationForm()
 
