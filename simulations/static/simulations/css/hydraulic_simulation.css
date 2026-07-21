@@ -155,3 +155,25 @@
                 padding: 20px;
             }
         }
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            background: var(--surface-muted);
+            font-weight: 700;
+        }

@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
 from simulations.calculations import (
@@ -29,6 +29,25 @@ def simulation_list(request):
         request,
         "simulations/simulation_list.html",
         {"simulations": simulations},
+    )
+
+
+@login_required
+def simulation_detail(request, pk):
+    simulation = get_object_or_404(
+        Simulation.objects.select_related(
+            "calculation_model",
+            "fluid",
+            "course",
+        ),
+        pk=pk,
+        owner=request.user,
+    )
+
+    return render(
+        request,
+        "simulations/simulation_detail.html",
+        {"simulation": simulation},
     )
 
 
