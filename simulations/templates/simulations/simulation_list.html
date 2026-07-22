@@ -1,78 +1,88 @@
-{% load static %}
-<!DOCTYPE html>
+{% extends "simulations/base.html" %}
 
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>FluidaLab | Mis simulaciones</title>
-    <link rel="stylesheet" href="{% static 'simulations/css/hydraulic_simulation.css' %}">
-</head>
-<body>
-    <main>
-        <header>
-            <h1>Mis simulaciones</h1>
-            <p>
-                Historial de simulaciones hidráulicas guardadas en FluidaLab.
-            </p>
-        </header>
+{% block title %}FluidaLab | Mis simulaciones{% endblock %}
 
-        <section class="panel" aria-labelledby="simulation-list-title">
-            <h2 id="simulation-list-title">Simulaciones guardadas</h2>
+{% block content %}
+    <header>
+        <h1>Mis simulaciones</h1>
+        <p>
+            Historial de simulaciones hidráulicas guardadas en FluidaLab.
+        </p>
+    </header>
 
-            <p>
-                <a href="{% url 'simulations:hydraulic_simulation' %}">
-                    Nueva simulación
-                </a>
-            </p>
+    <section class="panel" aria-labelledby="simulation-list-title">
+        <h2 id="simulation-list-title">Simulaciones guardadas</h2>
 
-            {% if simulations %}
-                <div class="table-wrapper">    
-                    <table>
-                        <thead>
+        <p>
+            <a href="{% url 'simulations:hydraulic_simulation' %}">
+                Nueva simulación
+            </a>
+        </p>
+
+        {% if simulations %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Título</th>
+                            <th scope="col">Diámetro [m]</th>
+                            <th scope="col">Caudal [m³/s]</th>
+                            <th scope="col">Reynolds</th>
+                            <th scope="col">Régimen</th>
+                            <th scope="col">Estado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for simulation in simulations %}
                             <tr>
-                                <th scope="col">Fecha</th>
-                                <th scope="col">Título</th>
-                                <th scope="col">Diámetro [m]</th>
-                                <th scope="col">Caudal [m³/s]</th>
-                                <th scope="col">Reynolds</th>
-                                <th scope="col">Régimen</th>
-                                <th scope="col">Estado</th>
+                                <td>
+                                    {{ simulation.created_at|date:"d/m/Y H:i" }}
+                                </td>
+
+                                <td>
+                                    <a
+                                        href="{% url 'simulations:simulation_detail' simulation.pk %}"
+                                    >
+                                        {{ simulation.title }}
+                                    </a>
+                                </td>
+
+                                <td>
+                                    {{ simulation.diameter_m|floatformat:6 }}
+                                </td>
+
+                                <td>
+                                    {{ simulation.flow_rate_m3_s|floatformat:8 }}
+                                </td>
+
+                                <td>
+                                    {{ simulation.reynolds_number|floatformat:2 }}
+                                </td>
+
+                                <td>
+                                    {% if simulation.flow_regime == "LAMINAR" %}
+                                        Laminar
+                                    {% elif simulation.flow_regime == "TRANSITION" %}
+                                        Transicional
+                                    {% elif simulation.flow_regime == "TURBULENT" %}
+                                        Turbulento
+                                    {% else %}
+                                        {{ simulation.flow_regime }}
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ simulation.get_status_display }}
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for simulation in simulations %}
-                                <tr>
-                                    <td>{{ simulation.created_at|date:"d/m/Y H:i" }}</td>
-                                    <td>
-                                        <a href="{% url 'simulations:simulation_detail' simulation.pk %}">
-                                            {{ simulation.title }}
-                                        </a>
-                                    </td>
-                                    <td>{{ simulation.diameter_m|floatformat:6 }}</td>
-                                    <td>{{ simulation.flow_rate_m3_s|floatformat:8 }}</td>
-                                    <td>{{ simulation.reynolds_number|floatformat:2 }}</td>
-                                    <td>
-                                        {% if simulation.flow_regime == "LAMINAR" %}
-                                            Laminar
-                                        {% elif simulation.flow_regime == "TRANSITION" %}
-                                            Transicional
-                                        {% elif simulation.flow_regime == "TURBULENT" %}
-                                            Turbulento
-                                        {% else %}
-                                            {{ simulation.flow_regime }}
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ simulation.get_status_display }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <p>Aún no tienes simulaciones guardadas.</p>
-            {% endif %}
-        </section>
-    </main>
-</body>
-</html>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>Aún no tienes simulaciones guardadas.</p>
+        {% endif %}
+    </section>
+{% endblock %}

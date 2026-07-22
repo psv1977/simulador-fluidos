@@ -1,166 +1,152 @@
-{% load static %}
-<!DOCTYPE html>
+{% extends "simulations/base.html" %}
 
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>FluidaLab | Detalle de simulación</title>
+{% block title %}FluidaLab | Detalle de simulación{% endblock %}
 
-    <link
-        rel="stylesheet"
-        href="{% static 'simulations/css/hydraulic_simulation.css' %}"
-    >
-</head>
-
-<body>
-    <main>
-        <header>
-            <h1>{{ simulation.title }}</h1>
-
-            <p>
-                Detalle de la simulación hidráulica guardada en FluidaLab.
-            </p>
-        </header>
-
-        <section class="panel" aria-labelledby="simulation-detail-title">
-            <h2 id="simulation-detail-title">Datos de la simulación</h2>
-
-            <div class="results">
-                <div class="result-row">
-                    <span class="result-label">Fecha de creación</span>
-                    <span class="result-value">
-                        {{ simulation.created_at|date:"d/m/Y H:i" }}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">Estado</span>
-                    <span class="result-value">
-                        {{ simulation.get_status_display }}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">Modelo de cálculo</span>
-                    <span class="result-value">
-                        {{ simulation.calculation_model|default:"No aplica" }}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">Versión de cálculo</span>
-                    <span class="result-value">
-                        {{ simulation.calculation_version|default:"No aplica" }}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">Diámetro [m]</span>
-                    <span class="result-value">
-                        {{ simulation.diameter_m|floatformat:6 }}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">Caudal [m³/s]</span>
-                    <span class="result-value">
-                        {% if simulation.flow_rate_m3_s is not None %}
-                            {{ simulation.flow_rate_m3_s|floatformat:8 }}
-                        {% else %}
-                            No aplica
-                        {% endif %}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">
-                        Densidad utilizada [kg/m³]
-                    </span>
-                    <span class="result-value">
-                        {{ simulation.density_used_kg_m3|floatformat:3 }}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">
-                        Viscosidad dinámica utilizada [Pa·s]
-                    </span>
-                    <span class="result-value">
-                        {{ simulation.dynamic_viscosity_used_pa_s|floatformat:8 }}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">
-                        Temperatura de referencia [°C]
-                    </span>
-                    <span class="result-value">
-                        {{ simulation.reference_temperature_used_c|floatformat:2 }}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">Área [m²]</span>
-                    <span class="result-value">
-                        {% if simulation.area_m2 is not None %}
-                            {{ simulation.area_m2|floatformat:8 }}
-                        {% else %}
-                            No aplica
-                        {% endif %}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">Velocidad [m/s]</span>
-                    <span class="result-value">
-                        {% if simulation.velocity_m_s is not None %}
-                            {{ simulation.velocity_m_s|floatformat:4 }}
-                        {% else %}
-                            No aplica
-                        {% endif %}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">Número de Reynolds</span>
-                    <span class="result-value">
-                        {% if simulation.reynolds_number is not None %}
-                            {{ simulation.reynolds_number|floatformat:2 }}
-                        {% else %}
-                            No aplica
-                        {% endif %}
-                    </span>
-                </div>
-
-                <div class="result-row">
-                    <span class="result-label">Régimen de flujo</span>
-                    <span class="result-value">
-                        {% if simulation.flow_regime == "LAMINAR" %}
-                            Laminar
-                        {% elif simulation.flow_regime == "TRANSITION" %}
-                            Transicional
-                        {% elif simulation.flow_regime == "TURBULENT" %}
-                            Turbulento
-                        {% else %}
-                            No aplica
-                        {% endif %}
-                    </span>
-                </div>
-            </div>
-        </section>
+{% block content %}
+    <header>
+        <h1>{{ simulation.title }}</h1>
 
         <p>
-            <a href="{% url 'simulations:simulation_list' %}">
-                Volver a Mis simulaciones
-            </a>
-
-            |
-
-            <a href="{% url 'simulations:hydraulic_simulation' %}">
-                Nueva simulación
-            </a>
+            Detalle de la simulación hidráulica guardada en FluidaLab.
         </p>
-    </main>
-</body>
-</html>
+    </header>
+
+    <section class="panel" aria-labelledby="simulation-detail-title">
+        <h2 id="simulation-detail-title">Datos de la simulación</h2>
+
+        <div class="results">
+            <div class="result-row">
+                <span class="result-label">Fecha de creación</span>
+                <span class="result-value">
+                    {{ simulation.created_at|date:"d/m/Y H:i" }}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">Estado</span>
+                <span class="result-value">
+                    {{ simulation.get_status_display }}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">Modelo de cálculo</span>
+                <span class="result-value">
+                    {{ simulation.calculation_model|default:"No aplica" }}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">Versión de cálculo</span>
+                <span class="result-value">
+                    {{ simulation.calculation_version|default:"No aplica" }}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">Diámetro [m]</span>
+                <span class="result-value">
+                    {{ simulation.diameter_m|floatformat:6 }}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">Caudal [m³/s]</span>
+                <span class="result-value">
+                    {% if simulation.flow_rate_m3_s is not None %}
+                        {{ simulation.flow_rate_m3_s|floatformat:8 }}
+                    {% else %}
+                        No aplica
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">
+                    Densidad utilizada [kg/m³]
+                </span>
+                <span class="result-value">
+                    {{ simulation.density_used_kg_m3|floatformat:3 }}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">
+                    Viscosidad dinámica utilizada [Pa·s]
+                </span>
+                <span class="result-value">
+                    {{ simulation.dynamic_viscosity_used_pa_s|floatformat:8 }}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">
+                    Temperatura de referencia [°C]
+                </span>
+                <span class="result-value">
+                    {{ simulation.reference_temperature_used_c|floatformat:2 }}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">Área [m²]</span>
+                <span class="result-value">
+                    {% if simulation.area_m2 is not None %}
+                        {{ simulation.area_m2|floatformat:8 }}
+                    {% else %}
+                        No aplica
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">Velocidad [m/s]</span>
+                <span class="result-value">
+                    {% if simulation.velocity_m_s is not None %}
+                        {{ simulation.velocity_m_s|floatformat:4 }}
+                    {% else %}
+                        No aplica
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">Número de Reynolds</span>
+                <span class="result-value">
+                    {% if simulation.reynolds_number is not None %}
+                        {{ simulation.reynolds_number|floatformat:2 }}
+                    {% else %}
+                        No aplica
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="result-row">
+                <span class="result-label">Régimen de flujo</span>
+                <span class="result-value">
+                    {% if simulation.flow_regime == "LAMINAR" %}
+                        Laminar
+                    {% elif simulation.flow_regime == "TRANSITION" %}
+                        Transicional
+                    {% elif simulation.flow_regime == "TURBULENT" %}
+                        Turbulento
+                    {% else %}
+                        No aplica
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <p>
+        <a href="{% url 'simulations:simulation_list' %}">
+            Volver a Mis simulaciones
+        </a>
+
+        |
+
+        <a href="{% url 'simulations:hydraulic_simulation' %}">
+            Nueva simulación
+        </a>
+    </p>
+{% endblock %}

@@ -23,6 +23,56 @@
             line-height: 1.5;
         }
 
+        .site-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .site-nav {
+            width: min(100% - 32px, 960px);
+            min-height: 64px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .brand {
+            color: var(--primary);
+            font-size: 1.35rem;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus,
+        .brand:hover,
+        .brand:focus {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .user-info {
+            color: var(--muted);
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
         main {
             width: min(100% - 32px, 960px);
             margin: 0 auto;
@@ -142,6 +192,21 @@
         }
 
         @media (max-width: 760px) {
+            .site-nav {
+                width: min(100% - 24px, 960px);
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 10px;
+                padding: 14px 0;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 10px 16px;
+            }
+
             main {
                 width: min(100% - 24px, 960px);
                 padding: 28px 0;
@@ -176,4 +241,17 @@
         th {
             background: var(--surface-muted);
             font-weight: 700;
+        }
+        .logout-button {
+            width: auto;
+            min-height: auto;
+            padding: 8px 12px;
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .logout-button:hover,
+        .logout-button:focus {
+            background: var(--surface-muted);
         }
