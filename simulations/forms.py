@@ -1,6 +1,7 @@
 from decimal import Decimal
-
 from django import forms
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 
 
 class HydraulicSimulationForm(forms.Form):
@@ -63,3 +64,38 @@ class HydraulicSimulationForm(forms.Form):
             }
         ),
     )
+
+#creacion de formularios para el registro de usuarios
+User = get_user_model()
+
+
+class UserRegistrationForm(UserCreationForm):
+    """Formulario para registrar nuevos usuarios en FluidaLab."""
+
+    email = forms.EmailField(
+        label="Correo electrónico",
+        required=True,
+    )
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = (
+            "username",
+            "email",
+            "password1",
+            "password2",
+        )
+        labels = {
+            "username": "Nombre de usuario",
+        }
+
+    def clean_email(self):
+        """Evita registrar dos usuarios con el mismo correo."""
+        email = self.cleaned_data["email"].strip().lower()
+
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(
+                "Ya existe una cuenta asociada a este correo."
+            )
+
+        return email

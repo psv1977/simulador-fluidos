@@ -1,7 +1,8 @@
 from decimal import Decimal
 
+from django.contrib.auth import login   
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.utils import timezone
 
 from simulations.calculations import (
@@ -10,9 +11,45 @@ from simulations.calculations import (
     calculate_velocity,
     classify_flow_regime,
 )
-from simulations.forms import HydraulicSimulationForm
-from simulations.models import CalculationModel, Simulation, SimulationStatus
+from simulations.forms import (
+    HydraulicSimulationForm, 
+    UserRegistrationForm,
+)
+from simulations.models import (
+    CalculationModel, 
+    Profile,
+    Simulation, 
+    SimulationStatus
+)
 
+def register(request):
+    """Registra un usuario y abre su sesión automáticamente."""
+
+    if request.user.is_authenticated:
+        return redirect("simulations:hydraulic_simulation")
+
+    if request.method == "POST":
+        form = UserRegistrationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+
+            Profile.objects.create(
+                user=user,
+                role=Profile.Role.STUDENT,
+            )
+
+            login(request, user)
+
+            return redirect("simulations:hydraulic_simulation")
+    else:
+        form = UserRegistrationForm()
+
+    return render(
+        request,
+        "registration/register.html",
+        {"form": form},
+    )
 
 @login_required
 def simulation_list(request):
@@ -138,3 +175,5 @@ def hydraulic_simulation(request):
         "simulations/hydraulic_simulation.html",
         context,
     )
+
+
