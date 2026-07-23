@@ -2,6 +2,7 @@ from django.urls import path
 
 from simulations.views import (
     hydraulic_simulation,
+    register,
     simulation_detail,
     simulation_list,
 )
@@ -10,6 +11,11 @@ from simulations.views import (
 app_name = "simulations"
 
 urlpatterns = [
+    path(
+        "registro/",
+        register,
+        name="register",
+    ),
     path("", hydraulic_simulation, name="hydraulic_simulation"),
     path(
         "mis-simulaciones/",

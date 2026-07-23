@@ -14,7 +14,7 @@ from simulations.calculations import (
     calculate_velocity,
     classify_flow_regime,
 )
-from simulations.models import CalculationModel, Simulation, SimulationStatus
+from simulations.models import CalculationModel, Simulation, SimulationStatus, Profile
 
 
 class PipeAreaTests(SimpleTestCase):
@@ -320,3 +320,96 @@ class SimulationViewTests(TestCase):
         self.assertEqual(simulation.status, SimulationStatus.CALCULATED)
         self.assertIsNotNone(simulation.reynolds_number)
         self.assertEqual(simulation.flow_regime, "TURBULENT")
+
+class UserRegistrationTests(TestCase):
+    """Pruebas para el registro de usuarios."""
+
+    def setUp(self):
+        self.User = get_user_model()
+        self.register_url = reverse("simulations:register")
+
+    def test_register_page_is_available(self):
+        """La página de registro debe estar disponible sin autenticación."""
+        response = self.client.get(self.register_url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response,
+            "registration/register.html",
+        )
+
+    def test_valid_registration_creates_user_and_profile(self):
+        """Un registro válido debe crear usuario, perfil y sesión."""
+        response = self.client.post(
+            self.register_url,
+            {
+                "username": "nuevo_usuario",
+                "email": "nuevo@example.com",
+                "password1": "ClaveSegura123!",
+                "password2": "ClaveSegura123!",
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse("simulations:hydraulic_simulation"),
+        )
+
+        user = self.User.objects.get(username="nuevo_usuario")
+
+        self.assertEqual(user.email, "nuevo@example.com")
+        self.assertTrue(
+            Profile.objects.filter(
+                user=user,
+                role=Profile.Role.STUDENT,
+            ).exists()
+        )
+
+        self.assertEqual(
+            int(self.client.session["_auth_user_id"]),
+            user.pk,
+        )
+
+    def test_duplicate_email_is_rejected(self):
+        """No debe permitir dos usuarios con el mismo correo."""
+        self.User.objects.create_user(
+            username="usuario_existente",
+            email="repetido@example.com",
+            password="ClaveSegura123!",
+        )
+
+        response = self.client.post(
+            self.register_url,
+            {
+                "username": "otro_usuario",
+                "email": "repetido@example.com",
+                "password1": "OtraClave123!",
+                "password2": "OtraClave123!",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            "Ya existe una cuenta asociada a este correo.",
+        )
+        self.assertFalse(
+            self.User.objects.filter(
+                username="otro_usuario",
+            ).exists()
+        )
+
+    def test_authenticated_user_is_redirected_from_register(self):
+        """Un usuario autenticado no debe volver al registro."""
+        user = self.User.objects.create_user(
+            username="usuario_activo",
+            password="ClaveSegura123!",
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(self.register_url)
+
+        self.assertRedirects(
+            response,
+            reverse("simulations:hydraulic_simulation"),
+        )

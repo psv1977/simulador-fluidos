@@ -1,0 +1,60 @@
+{% extends "simulations/base.html" %}
+
+{% block title %}FluidaLab | Crear cuenta{% endblock %}
+
+{% block content %}
+    <header>
+        <h1>Crear cuenta</h1>
+        <p>
+            Regístrate para guardar y consultar tus simulaciones.
+        </p>
+    </header>
+
+    <section class="panel login-panel" aria-labelledby="register-title">
+        <h2 id="register-title">Registro de usuario</h2>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <ul class="error-list">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="field">
+                    {{ field.label_tag }}
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <div class="help-text">
+                            {{ field.help_text|safe }}
+                        </div>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <ul class="error-list">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit">
+                Crear cuenta
+            </button>
+        </form>
+
+        <p>
+            ¿Ya tienes una cuenta?
+            <a href="{% url 'login' %}">
+                Iniciar sesión
+            </a>
+        </p>
+    </section>
+{% endblock %}
