@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-o3xo_20@7sxnop1bme&u4(2p1-cnz!0ai+j_wh$6%hvg-qi-84
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "fluidalab.imansl.cl",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
@@ -122,3 +126,8 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 LOGIN_REDIRECT_URL = "/simulations/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://fluidalab.imansl.cl",
+]
