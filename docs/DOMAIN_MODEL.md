@@ -521,7 +521,11 @@ Esta decisión simplifica:
 - las consultas ORM;
 - la administración desde Django Admin.
 
-No se creará inicialmente una entidad separada `SimulationResult`.
+En FluidLab 1.0 no existirá un modelo independiente denominado `SimulationResult`.
+
+Los datos de entrada y los resultados calculados se almacenarán en la entidad `Simulation`.
+
+Una separación entre `Simulation` y `SimulationResult` podrá evaluarse en versiones futuras cuando una misma simulación requiera múltiples ejecuciones o escenarios.
 
 Una separación posterior puede justificarse si:
 
@@ -543,6 +547,7 @@ Course
 Enrollment
 Fluid
 Simulation
+CalculationModel
 ```
 
 Relaciones:

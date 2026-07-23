@@ -1,0 +1,92 @@
+{% extends "simulations/base.html" %}
+
+{% block title %}FluidaLab | Simulador hidráulico{% endblock %}
+
+{% block content %}
+    <header>
+        <h1>FluidaLab</h1>
+        <p>
+            Simulador hidráulico inicial para calcular el área de tubería,
+            la velocidad media, el número de Reynolds y el régimen de flujo.
+        </p>
+    </header>
+
+    <div class="layout">
+        <section class="panel" aria-labelledby="form-title">
+            <h2 id="form-title">Datos de entrada</h2>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <ul class="error-list">
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="field">
+                        {{ field.label_tag }}
+                        {{ field }}
+
+                        {% if field.errors %}
+                            <ul class="error-list">
+                                {% for error in field.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit">Calcular</button>
+            </form>
+        </section>
+
+        {% if results %}
+            <section class="panel" aria-labelledby="results-title">
+                <h2 id="results-title">Resultados</h2>
+
+                <div class="results">
+                    <div class="result-row">
+                        <span class="result-label">Área transversal [m²]</span>
+                        <span class="result-value">
+                            {{ results.area_m2|floatformat:6 }}
+                        </span>
+                    </div>
+
+                    <div class="result-row">
+                        <span class="result-label">Velocidad media [m/s]</span>
+                        <span class="result-value">
+                            {{ results.velocity_m_s|floatformat:4 }}
+                        </span>
+                    </div>
+
+                    <div class="result-row">
+                        <span class="result-label">Número de Reynolds</span>
+                        <span class="result-value">
+                            {{ results.reynolds_number|floatformat:2 }}
+                        </span>
+                    </div>
+
+                    <div class="result-row">
+                        <span class="result-label">Régimen de flujo</span>
+                        <span class="result-value">
+                            {% if results.flow_regime == "LAMINAR" %}
+                                Laminar
+                            {% elif results.flow_regime == "TRANSITION" %}
+                                Transicional
+                            {% elif results.flow_regime == "TURBULENT" %}
+                                Turbulento
+                            {% else %}
+                                {{ results.flow_regime }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+    </div>
+{% endblock %}
