@@ -1,4 +1,5 @@
 {% extends "simulations/base.html" %}
+{% load static %}
 
 {% block title %}FluidaLab | Simulador hidráulico{% endblock %}
 
@@ -6,7 +7,7 @@
     <header>
         <h1>FluidaLab</h1>
         <p>
-            Simulador hidráulico inicial para calcular el área de tubería,
+            Simulador hidráulico interactivo para calcular el área de tubería,
             la velocidad media, el número de Reynolds y el régimen de flujo.
         </p>
     </header>
@@ -26,67 +27,145 @@
                     </ul>
                 {% endif %}
 
-                {% for field in form %}
-                    <div class="field">
-                        {{ field.label_tag }}
-                        {{ field }}
+                <div class="field">
+                    {{ form.title.label_tag }}
+                    {{ form.title }}
 
-                        {% if field.errors %}
-                            <ul class="error-list">
-                                {% for error in field.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
+                    {% if form.title.errors %}
+                        <ul class="error-list">
+                            {% for error in form.title.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div
+                    class="pipe-visualization"
+                    aria-label="Vista longitudinal de la tubería y perfil de velocidades"
+                >
+                    <h3>Vista longitudinal de la tubería</h3>
+
+                    <div class="pipe-canvas-container">
+                        <canvas
+                            id="pipe-canvas"
+                            width="760"
+                            height="280"
+                            aria-label="Representación longitudinal del flujo en una tubería"
+                        ></canvas>
                     </div>
-                {% endfor %}
 
-                <button type="submit">Calcular</button>
+                    <div class="pipe-information">
+                        <p>
+                            Diámetro:
+                            <strong id="pipe-diameter-value">0,100</strong> m
+                        </p>
+
+                        <p>
+                            Perfil:
+                            <strong id="velocity-profile-label">—</strong>
+                        </p>
+                    </div>
+
+                    <small>
+                        Representación cualitativa del perfil de velocidades.
+                        No corresponde a una simulación CFD.
+                    </small>
+                </div>
+
+                <div class="field">
+                    {{ form.diameter_m.label_tag }}
+                    {{ form.diameter_m }}
+
+                    <div class="slider-information">
+                        <p>
+                            Diámetro actual:
+                            <strong id="diameter-value">0,100</strong> m
+                        </p>
+
+                        <small>
+                            Rango: 0,010 a 0,500 m · Resolución: 0,001 m
+                        </small>
+                    </div>
+
+                    {% if form.diameter_m.errors %}
+                        <ul class="error-list">
+                            {% for error in form.diameter_m.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    {{ form.flow_rate_m3_s.label_tag }}
+                    {{ form.flow_rate_m3_s }}
+
+                    {% if form.flow_rate_m3_s.errors %}
+                        <ul class="error-list">
+                            {% for error in form.flow_rate_m3_s.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    {{ form.density_kg_m3.label_tag }}
+                    {{ form.density_kg_m3 }}
+
+                    {% if form.density_kg_m3.errors %}
+                        <ul class="error-list">
+                            {% for error in form.density_kg_m3.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    {{ form.dynamic_viscosity_pa_s.label_tag }}
+                    {{ form.dynamic_viscosity_pa_s }}
+
+                    {% if form.dynamic_viscosity_pa_s.errors %}
+                        <ul class="error-list">
+                            {% for error in form.dynamic_viscosity_pa_s.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <button type="submit">Guardar simulación</button>
             </form>
         </section>
 
-        {% if results %}
-            <section class="panel" aria-labelledby="results-title">
-                <h2 id="results-title">Resultados</h2>
+        <section class="panel" aria-labelledby="results-title">
+            <h2 id="results-title">Resultados instantáneos</h2>
 
-                <div class="results">
-                    <div class="result-row">
-                        <span class="result-label">Área transversal [m²]</span>
-                        <span class="result-value">
-                            {{ results.area_m2|floatformat:6 }}
-                        </span>
-                    </div>
-
-                    <div class="result-row">
-                        <span class="result-label">Velocidad media [m/s]</span>
-                        <span class="result-value">
-                            {{ results.velocity_m_s|floatformat:4 }}
-                        </span>
-                    </div>
-
-                    <div class="result-row">
-                        <span class="result-label">Número de Reynolds</span>
-                        <span class="result-value">
-                            {{ results.reynolds_number|floatformat:2 }}
-                        </span>
-                    </div>
-
-                    <div class="result-row">
-                        <span class="result-label">Régimen de flujo</span>
-                        <span class="result-value">
-                            {% if results.flow_regime == "LAMINAR" %}
-                                Laminar
-                            {% elif results.flow_regime == "TRANSITION" %}
-                                Transicional
-                            {% elif results.flow_regime == "TURBULENT" %}
-                                Turbulento
-                            {% else %}
-                                {{ results.flow_regime }}
-                            {% endif %}
-                        </span>
-                    </div>
+            <div class="results">
+                <div class="result-row">
+                    <span class="result-label">Área transversal [m²]</span>
+                    <span class="result-value" id="area-result">—</span>
                 </div>
-            </section>
-        {% endif %}
+
+                <div class="result-row">
+                    <span class="result-label">Velocidad media [m/s]</span>
+                    <span class="result-value" id="velocity-result">—</span>
+                </div>
+
+                <div class="result-row">
+                    <span class="result-label">Número de Reynolds</span>
+                    <span class="result-value" id="reynolds-result">—</span>
+                </div>
+
+                <div class="result-row">
+                    <span class="result-label">Régimen de flujo</span>
+                    <span class="result-value" id="flow-regime-result">—</span>
+                </div>
+            </div>
+        </section>
     </div>
+
+    <script src="{% static 'simulations/js/hydraulic_simulation.js' %}"></script>
 {% endblock %}

@@ -17,11 +17,15 @@ class HydraulicSimulationForm(forms.Form):
         label="Diámetro interno [m]",
         required=True,
         initial=Decimal("0.1"),
-        min_value=Decimal("0.000001"),
+        min_value=Decimal("0.01"),
+        max_value=Decimal("0.50"),
         widget=forms.NumberInput(
             attrs={
+                "type": "range",
+                "min": "0.01",
+                "max": "0.50",
                 "step": "0.001",
-                "min": "0.000001",
+                "class": "diameter-slider",
             }
         ),
     )
