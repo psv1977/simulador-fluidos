@@ -1,350 +1,214 @@
-# 🌊 FluidaLab
+🌊 FluidaLab
 
-> **FluidaLab** es una aplicación web desarrollada con **Python** y **Django** para realizar simulaciones hidráulicas en tuberías, almacenar los resultados obtenidos y administrar el historial de simulaciones de cada usuario mediante una arquitectura web moderna basada en el patrón **MVT (Model–View–Template)**.
+Plataforma abierta para simulación hidráulica interactiva,visualización de fenómenos de Mecánica de Fluidos y apoyo a laenseñanza de la ingeniería.Open platform for interactive hydraulic simulation, Fluid Mechanicsvisualization and engineering education.
 
----
 
-# Descripción
 
-FluidaLab nace como una plataforma para el desarrollo de herramientas de ingeniería hidráulica accesibles desde un navegador web.
+🇪🇸 Español
 
-La versión **1.0.0** implementa un simulador hidráulico básico que permite calcular parámetros fundamentales del flujo en tuberías circulares, almacenar cada simulación realizada y consultar posteriormente su historial.
+Descripción
 
-Aunque esta primera versión se centra en un único modelo hidráulico, la arquitectura fue diseñada desde el inicio para permitir la incorporación de nuevos modelos de cálculo y futuras funcionalidades sin modificar la estructura principal del sistema.
+FluidaLab es una plataforma web desarrollada con Python yDjango para el análisis, simulación y visualización interactiva delflujo interno en tuberías.
 
----
+Más que una calculadora hidráulica, FluidaLab busca transformarse en unaplataforma modular donde estudiantes, docentes e ingenieros puedancomprender los fenómenos de Mecánica de Fluidos mediante simulacionesdinámicas, representaciones visuales y modelos de cálculo basados enprincipios físicos.
 
-# Objetivos del proyecto
+La arquitectura fue diseñada desde el inicio para permitir incorporarnuevos modelos hidráulicos sin modificar la estructura principal delsistema.
 
-Los principales objetivos de FluidaLab son:
+Objetivos
 
-- Desarrollar una aplicación web utilizando Django.
-- Implementar una arquitectura escalable basada en MVT.
-- Separar la lógica hidráulica de la interfaz gráfica.
-- Almacenar todas las simulaciones realizadas por cada usuario.
-- Servir como base para futuras herramientas de simulación hidráulica.
+Facilitar la comprensión de la Mecánica de Fluidos mediantesimulaciones interactivas.
 
----
+Desarrollar una plataforma modular para herramientas hidráulicas.
 
-# Funcionalidades de la versión 1.0
+Separar completamente el motor de cálculo de la interfaz gráfica.
 
-## Gestión de usuarios
+Almacenar el historial de simulaciones de cada usuario.
 
-- Inicio de sesión.
-- Cierre de sesión.
-- Protección mediante autenticación.
-- Cada usuario accede únicamente a sus propias simulaciones.
+Permitir la incorporación de nuevos modelos de cálculo yvisualización.
 
----
+Características de la versión 1.1
 
-## Simulación hidráulica
+Gestión de usuarios
+
+Registro e inicio de sesión.
+
+Protección mediante autenticación de Django.
+
+Historial individual de simulaciones.
+
+Simulación interactiva
+
+Slider para modificar el diámetro interno.
+
+Actualización instantánea de:
+
+Área transversal.
+
+Velocidad media.
+
+Número de Reynolds.
+
+Régimen del flujo.
+
+Visualización longitudinal de la tubería.
+
+Representación cualitativa del perfil de velocidades.
+
+Persistencia de simulaciones.
+
+Tecnologías
+
+Tecnología     Uso
+
+Python         Lenguaje principalDjango 6       Framework webHTML5          PlantillasCSS3           EstilosJavaScript     Interactividad en tiempo realSQLite         DesarrolloPostgreSQL     Producción (planificado)Git / GitHub   Control de versiones
+
+Arquitectura
+
+FluidaLab sigue el patrón MVT (Model--View--Template).
+
+Usuario
+   │
+   ▼
+URL Dispatcher
+   │
+   ▼
+Views
+╱      ╲
+▼       ▼
+Models Templates
+   │
+   ▼
+Base de datos
+
+La lógica hidráulica permanece desacoplada de la interfaz gráfica,permitiendo reutilizar el motor de cálculo y extender el proyecto connuevos módulos.
+
+Modelo hidráulico actual
 
 El sistema calcula automáticamente:
 
-- Área transversal de la tubería.
-- Velocidad media del flujo.
-- Número de Reynolds.
-- Clasificación automática del régimen de flujo:
-  - Laminar
-  - Transicional
-  - Turbulento
+Área transversal
 
----
+Velocidad media
 
-## Persistencia
+Número de Reynolds
 
-Cada simulación queda almacenada en la base de datos incluyendo:
+Régimen de flujo (Laminar, Transicional y Turbulento)
 
-- Usuario propietario.
-- Fecha de creación.
-- Parámetros de entrada.
-- Resultados calculados.
-- Estado de la simulación.
-- Modelo de cálculo utilizado.
-- Versión del algoritmo de cálculo.
+Roadmap
 
----
+✔ Versión 1.1
 
-## Historial de simulaciones
+Simulación interactiva.
 
-Cada usuario puede:
+Slider de diámetro.
 
-- visualizar todas sus simulaciones;
-- consultar el detalle completo de cada una;
-- crear nuevas simulaciones;
-- acceder únicamente a sus propios registros.
+Perfil longitudinal.
 
----
+Perfil de velocidades.
 
-# Tecnologías utilizadas
+Persistencia de simulaciones.
 
-| Tecnología | Uso |
-|------------|-----|
-| Python 3.14 | Lenguaje principal |
-| Django 6 | Framework web |
-| SQLite | Base de datos de desarrollo |
-| HTML5 | Plantillas |
-| CSS3 | Interfaz gráfica |
-| Git | Control de versiones |
-| GitHub | Repositorio |
+🚧 Versión 1.2
 
----
+Biblioteca de fluidos.
 
-# Arquitectura del sistema
+Biblioteca de materiales.
 
-FluidaLab sigue el patrón arquitectónico **MVT (Model–View–Template)** implementado por Django.
+Selección automática de propiedades.
 
-```
-                  Usuario
-                      │
-                      ▼
-                  URL Dispatcher
-                      │
-                      ▼
-                  Views.py
-                 (Lógica)
-                ╱          ╲
-               ▼            ▼
-         Models.py      Templates
-              │             │
-              └──────┬──────┘
-                     ▼
-                Base de datos
-```
+Mejoras de visualización.
 
-## Componentes
+🔬 Versión 1.5
 
-### Models
+Darcy--Weisbach.
 
-Representan las entidades del sistema y administran el acceso a la base de datos mediante el ORM de Django.
+Colebrook--White.
 
-### Views
+Diagrama de Moody.
 
-Procesan las solicitudes HTTP, ejecutan la lógica del simulador hidráulico y generan el contexto enviado a las plantillas.
+🚀 Versión 2.0
 
-### Templates
+Redes de tuberías.
 
-Construyen la interfaz gráfica utilizando HTML y el motor de plantillas de Django.
+Bombas.
 
----
+Accesorios.
 
-# Estructura del proyecto
+API REST.
 
-```
-simulador-fluidos/
+Reportes.
 
-│
-├── config/
-│
-├── simulations/
-│   ├── calculations.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── views.py
-│   ├── urls.py
-│   ├── tests.py
-│   ├── migrations/
-│   ├── static/
-│   └── templates/
-│
-├── manage.py
-├── requirements.txt
-├── README.md
-└── LICENSE
-```
+Módulos educativos.
 
----
+Filosofía
 
-# Uso de la aplicación
+El software de ingeniería no debería limitarse a entregar resultadosnuméricos. También debería ayudar a comprender los fenómenos físicosque existen detrás de cada cálculo.
 
-FluidaLab fue concebida como una aplicación web.
+Desarrollo
 
-Una vez desplegada en un servidor, los usuarios únicamente deberán acceder mediante un navegador web e iniciar sesión con sus credenciales.
+Instalación
 
-No será necesario instalar Python ni descargar el proyecto para utilizar la aplicación.
+git clone <repositorio>
+cd FluidaLab
 
----
+python -m venv .venv
 
-# Instalación para desarrollo
+# Linux
+source .venv/bin/activate
 
-Las siguientes instrucciones están dirigidas únicamente a desarrolladores que deseen ejecutar el proyecto localmente.
+# Windows
+.venv\Scripts\activate
 
-## Clonar el repositorio
-
-```bash
-git clone https://github.com/TU_USUARIO/simulador-fluidos.git
-```
-
-Entrar al proyecto
-
-```bash
-cd simulador-fluidos
-```
-
-Crear entorno virtual
-
-```bash
-python -m venv venv
-```
-
-Activarlo
-
-Linux / WSL
-
-```bash
-source venv/bin/activate
-```
-
-Windows
-
-```bash
-venv\Scripts\activate
-```
-
-Instalar dependencias
-
-```bash
 pip install -r requirements.txt
-```
 
-Aplicar migraciones
-
-```bash
 python manage.py migrate
-```
-
-Crear superusuario
-
-```bash
 python manage.py createsuperuser
-```
-
-Ejecutar el servidor
-
-```bash
 python manage.py runserver
-```
 
-Abrir:
+Pruebas
 
-```
-http://127.0.0.1:8000/simulations/
-```
-
----
-
-# Pruebas automatizadas
-
-El proyecto incorpora pruebas automatizadas para validar tanto el motor hidráulico como el funcionamiento de la aplicación web.
-
-Ejecutar:
-
-```bash
 python manage.py test simulations
-```
 
-Estado actual:
+Historial de versiones
 
-- 25 pruebas automatizadas.
-- Todas aprobadas.
+El detalle de cada versión se documenta en CHANGELOG.md.
 
----
+🇬🇧 English
 
-# Modelo de datos
+Overview
 
-Las principales entidades del sistema son:
+FluidaLab is an open web platform for hydraulic simulation, interactivevisualization and Fluid Mechanics education developed with Python andDjango.
 
-- User
-- Profile
-- Course
-- Enrollment
-- Fluid
-- CalculationModel
-- Simulation
+The project combines engineering calculations, real-time visualizationand simulation management within a modular architecture designed toevolve into a complete hydraulic engineering platform.
 
-La entidad principal corresponde a **Simulation**, donde se almacenan tanto los parámetros de entrada como los resultados obtenidos en cada cálculo.
+Current features
 
----
+Interactive hydraulic simulation.
 
-# Seguridad
+Real-time Reynolds calculation.
 
-FluidaLab incorpora:
+Longitudinal pipe visualization.
 
-- autenticación mediante Django Authentication;
-- protección CSRF;
-- acceso restringido a usuarios autenticados;
-- aislamiento de las simulaciones por usuario.
+Qualitative velocity profile.
 
----
+User authentication.
 
-# Capturas de pantalla
+Simulation persistence.
 
-Se recomienda incorporar las siguientes imágenes:
+Modular Django architecture.
 
-- Pantalla de inicio de sesión.
-- Nueva simulación.
-- Historial de simulaciones.
-- Detalle de simulación.
-- Panel de administración de Django.
+Development Philosophy
 
----
+Engineering software should not only produce accurate numericalresults. It should also help engineers understand the physicalphenomena behind those results.
 
-# Roadmap
+Author
 
-## Versión 1.0.0
+Patricio Saavedra
 
-- ✔ Motor hidráulico.
-- ✔ Arquitectura MVT.
-- ✔ Persistencia mediante ORM.
-- ✔ Autenticación.
-- ✔ Historial de simulaciones.
-- ✔ Detalle de simulaciones.
-- ✔ Interfaz web.
-- ✔ Pruebas automatizadas.
+Mechanical Engineer | MBA
 
----
+Engineering Consultant • Software Developer
 
-## Versión 1.1
+License
 
-- Exportación CSV.
-- Eliminación de simulaciones.
-- Filtros de búsqueda.
-- Mejoras de interfaz.
-
----
-
-## Versión 2.0
-
-- Cálculo de pérdidas de carga.
-- Darcy–Weisbach.
-- Colebrook–White.
-- Diagrama de Moody.
-- Comparación entre simulaciones.
-- Múltiples modelos hidráulicos.
-- API REST.
-- Exportación PDF.
-- Gráficos interactivos.
-
----
-
-# Autor
-
-**Patricio Saavedra**
-
-Ingeniero Mecánico.
-
-Especialista en mantenimiento predictivo, confiabilidad industrial y desarrollo de aplicaciones técnicas utilizando Python y Django.
-
----
-
-# Licencia
-
-Este proyecto se distribuye bajo la licencia MIT.
-
----
-
-# Estado del proyecto
-
-**Versión actual: v1.0.0**
-
-FluidaLab se encuentra en una versión funcional y estable que implementa la arquitectura base del sistema, el primer modelo hidráulico y la infraestructura necesaria para continuar su evolución hacia una plataforma de simulación hidráulica de mayor alcance.
+MIT License
